@@ -17,7 +17,9 @@ namespace HttpCachedClient
             this.ServiceUrl = baseUri;
             this.CollectionName = collectionName;
 
-            _cache = new MemoryCache(collectionName);
+            if(_cache != null)
+                _cache = new MemoryCache(collectionName);
+
             _client = new HttpBasicClient(baseUri);
         }
 
