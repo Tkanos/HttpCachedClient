@@ -30,17 +30,20 @@ namespace HttpCachedClient
         /// <returns></returns>
         public T Get<T>(string relativeUrl, DateTimeOffset? absoluteExpiration = null, string key = null)
         {
-            if(!absoluteExpiration.HasValue) // Do not use Caching
-            {
-                return GetResponse<T>(relativeUrl);
-            }
+            return Function(key ?? relativeUrl, () => GetResponse<T>(relativeUrl), absoluteExpiration); 
+        }
 
-            if(string.IsNullOrEmpty(key))
-            {
-                key = relativeUrl;
-            }
-
-            return AddOrGetExisting<T>(key, () => GetResponse<T>(relativeUrl), absoluteExpiration.Value);
+        /// <summary>
+        /// Gets the specified relative URL.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="relativeUrl">The relative URL.</param>
+        /// <param name="policy">The policy.</param>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public T Get<T>(string relativeUrl, CacheItemPolicy policy, string key = null)
+        {
+            return Function(key ?? relativeUrl, () => GetResponse<T>(relativeUrl), policy);
         }
 
         /// <summary>
@@ -54,20 +57,32 @@ namespace HttpCachedClient
         /// <returns></returns>
         public T Post<T>(string relativeUrl, string data, DateTimeOffset? absoluteExpiration = null, string key = null)
         {
-            if (!absoluteExpiration.HasValue) // Do not use Caching
-            {
-                return PostResponse<T>(relativeUrl, data);
-            }
-
-            if (string.IsNullOrEmpty(key))
-            {
-                key = relativeUrl;
-            }
-
-            return AddOrGetExisting<T>(key, () => PostResponse<T>(relativeUrl, data), absoluteExpiration.Value);
+            return Function(key ?? relativeUrl, () => PostResponse<T>(relativeUrl, data), absoluteExpiration);
         }
 
-        /*private T Function<T> (string key, Func<T> method, DateTimeOffset? absoluteExpiration = null)
+        /// <summary>
+        /// Posts the specified relative URL.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="relativeUrl">The relative URL.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="policy">The policy.</param>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        public T Post<T>(string relativeUrl, string data, CacheItemPolicy policy = null, string key = null)
+        {
+            return Function(key ?? relativeUrl, () => PostResponse<T>(relativeUrl, data), policy);
+        }
+
+        /// <summary>
+        /// Functions the specified key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="method">The method.</param>
+        /// <param name="absoluteExpiration">The absolute expiration.</param>
+        /// <returns></returns>
+        private T Function<T> (string key, Func<T> method, DateTimeOffset? absoluteExpiration = null )
         {
             if (!absoluteExpiration.HasValue) // Do not use Caching
             {
@@ -75,7 +90,13 @@ namespace HttpCachedClient
             }
 
             return AddOrGetExisting<T>(key,  method, absoluteExpiration.Value);
-        }*/
+        }
+
+        private T Function<T>(string key, Func<T> method, CacheItemPolicy policy = null )
+        {
+
+            return AddOrGetExisting<T>(key, method, policy);
+        }
 
         #region Protected Methods
         /// <summary>
