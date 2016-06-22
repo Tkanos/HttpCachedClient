@@ -9,7 +9,7 @@ namespace HttpCachedClient
 		public string ServiceUrl { get; set; }
         public string CollectionName { get; set; }
 
-        private static MemoryCache _cache;
+        private MemoryCache _cache;
         private HttpBasicClient _client;
 
         public CachedClient(string baseUri, string collectionName)
