@@ -8,8 +8,8 @@ namespace HttpCachedClient
     {
         public string CollectionName { get; set; }
 
-        private MemoryCache _cache;
-        private HttpBasicClient _client;
+        private MemoryCache _cache { get; set; }
+        private IClient _client { get; set; }
 
         public CachedClient(string baseUri, string collectionName = null)
         {
