@@ -64,8 +64,18 @@ namespace HttpCachedClient
                 key = relativeUrl;
             }
 
-            return AddOrGetExisting<T>(relativeUrl, () => PostResponse<T>(relativeUrl, data), absoluteExpiration.Value);
+            return AddOrGetExisting<T>(key, () => PostResponse<T>(relativeUrl, data), absoluteExpiration.Value);
         }
+
+        /*private T Function<T> (string key, Func<T> method, DateTimeOffset? absoluteExpiration = null)
+        {
+            if (!absoluteExpiration.HasValue) // Do not use Caching
+            {
+                return method.Invoke();
+            }
+
+            return AddOrGetExisting<T>(key,  method, absoluteExpiration.Value);
+        }*/
 
         #region Protected Methods
         /// <summary>
